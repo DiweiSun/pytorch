@@ -543,6 +543,7 @@ test_dynamo_benchmark() {
   else
     if [[ "${TEST_CONFIG}" == *cpu_inductor* ]]; then
       test_single_dynamo_benchmark "inference" "$suite" "$shard_id" --inference --float32 --freezing "$@"
+      test_single_dynamo_benchmark "inference" "$suite" "$shard_id" --inference --float32 "$@"
     elif [[ "${TEST_CONFIG}" == *aot_inductor* ]]; then
       test_single_dynamo_benchmark "inference" "$suite" "$shard_id" --inference --bfloat16 "$@"
     else
