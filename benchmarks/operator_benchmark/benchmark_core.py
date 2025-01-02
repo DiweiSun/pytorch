@@ -36,6 +36,11 @@ BENCHMARK_TESTER = []
 
 SKIP_OP_LISTS = ["weight_norm_sparsifier_step"]
 
+SKIP_TEST_LISTS = [
+    # https://github.com/pytorch/pytorch/issues/143852
+    "channel_shuffle_batch_size4_channels_per_group64_height64_width64_groups4_channel_lastTrue",
+]
+
 
 def _register_test(*test_metainfo):
     """save the metainfo needed to create a test. Currently test_metainfo
@@ -387,6 +392,9 @@ class BenchmarkRunner:
     def _check_skip(self, test_module, cmd_flag):
         return cmd_flag is None or (test_module not in cmd_flag)
 
+    def _check_skip_test(self, test_case, cmd_flag):
+        return cmd_flag is None or (test_case not in cmd_flag)
+
     def _keep_test(self, test_case):
         # TODO: consider regex matching for test filtering.
         # Currently, this is a sub-string matching.
@@ -403,6 +411,7 @@ class BenchmarkRunner:
             self._check_keep(op_test_config.test_name, self.args.test_name)
             and self._check_keep_list(test_case.op_bench.module_name(), operators)
             and self._check_skip(test_case.op_bench.module_name(), SKIP_OP_LISTS)
+            and self._check_skip_test(test_case.test_config.test_name, SKIP_TEST_LISTS)
             and self._check_operator_first_char(
                 test_case.op_bench.module_name(), self.operator_range
             )
